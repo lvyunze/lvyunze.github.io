@@ -1,0 +1,1268 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="docker镜像篇, 技术分享">
+    <meta name="description" content="注：文章来源于作者：CloudMan书籍：《每天五分钟玩转Docker容器技术》
+最小的镜像镜像是 Docker 容器的基石，容器是镜像的运行实例，有了镜像才能启动容器。
+内容如下：
+首先通过研究几个典型的镜像，分析镜像的内部结构。然后学习">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>docker镜像篇 | 云泽</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+
+<header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">云泽</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="/" class="waves-effect waves-light">
+            
+            <i class="fa fa-home"></i>
+            
+            <span>首页</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/tags" class="waves-effect waves-light">
+            
+            <i class="fa fa-tags"></i>
+            
+            <span>标签</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/categories" class="waves-effect waves-light">
+            
+            <i class="fa fa-bookmark"></i>
+            
+            <span>分类</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/archives" class="waves-effect waves-light">
+            
+            <i class="fa fa-archive"></i>
+            
+            <span>归档</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/about" class="waves-effect waves-light">
+            
+            <i class="fa fa-user-circle-o"></i>
+            
+            <span>关于</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/friends" class="waves-effect waves-light">
+            
+            <i class="fa fa-address-book"></i>
+            
+            <span>友情链接</span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">云泽</div>
+        <div class="logo-desc">
+            
+            云计算方向小哥
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li>
+            <a href="/" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-home"></i>
+                
+                首页
+            </a>
+        </li>
+        
+        <li>
+            <a href="/tags" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-tags"></i>
+                
+                标签
+            </a>
+        </li>
+        
+        <li>
+            <a href="/categories" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-bookmark"></i>
+                
+                分类
+            </a>
+        </li>
+        
+        <li>
+            <a href="/archives" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-archive"></i>
+                
+                归档
+            </a>
+        </li>
+        
+        <li>
+            <a href="/about" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-user-circle-o"></i>
+                
+                关于
+            </a>
+        </li>
+        
+        <li>
+            <a href="/friends" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-address-book"></i>
+                
+                友情链接
+            </a>
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/lvyunze" class="waves-effect waves-light" target="_blank">
+                <i class="fa fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/lvyunze" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/20.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        docker镜像篇
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/docker镜像篇/" target="_blank">
+                                <span class="chip bg-color">docker镜像篇</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fa fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/docker/" class="post-category" target="_blank">
+                                docker
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2019-08-12
+                </div>
+
+                
+				
+				
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p>注：文章来源于作者：CloudMan<br>书籍：《每天五分钟玩转Docker容器技术》</p>
+<h3 id="最小的镜像"><a href="#最小的镜像" class="headerlink" title="最小的镜像"></a>最小的镜像</h3><p>镜像是 Docker 容器的基石，容器是镜像的运行实例，有了镜像才能启动容器。</p>
+<p>内容如下：</p>
+<p>首先通过研究几个典型的镜像，分析镜像的内部结构。<br>然后学习如何构建自己的镜像。<br>最后介绍怎样管理和分发镜像。</p>
+<p><strong>镜像的内部结构</strong><br>为什么我们要讨论镜像的内部结构？</p>
+<p>如果只是使用镜像，当然不需要了解，直接通过 docker 命令下载和运行就可以了。</p>
+<p>但如果我们想创建自己的镜像，或者想理解 Docker 为什么是轻量级的，就非常有必要学习这部分知识了。</p>
+<p>我们从一个最小的镜像开始吧。<br><strong>hello-world - 最小的镜像</strong></p>
+<p>hello-world 是 Docker 官方提供的一个镜像，通常用来验证 Docker 是否安装成功。</p>
+<p>我们先通过 docker pull 从 Docker Hub 下载它。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/1.bmp" alt><br>用 docker images 命令查看镜像的信息。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/2.bmp" alt><br>hello-world 镜像竟然还不到 2KB!<br>通过 docker run 运行。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/3.bmp" alt></p>
+<p>其实我们更关心 hello-world 镜像包含哪些内容。</p>
+<p>Dockerfile 是镜像的描述文件，定义了如何构建 Docker 镜像。Dockerfile 的语法简洁且可读性强，后面我们会专门讨论如何编写 Dockerfile。</p>
+<p>hello-world 的 Dockerfile 内容如下：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/4.bmp" alt></p>
+<p>只有短短三条指令。</p>
+<p>1、FROM scratch<br>此镜像是从白手起家，从 0 开始构建。</p>
+<p>2、COPY hello /<br>将文件“hello”复制到镜像的根目录。</p>
+<p>3、CMD [“/hello”]<br>容器启动时，执行 /hello</p>
+<p>镜像 hello-world 中就只有一个可执行文件 “hello”，其功能就是打印出 “Hello from Docker ……” 等信息。</p>
+<p>/hello 就是文件系统的全部内容，连最基本的 /bin，/usr, /lib, /dev 都没有。</p>
+<p>hello-world 虽然是一个完整的镜像，但它并没有什么实际用途。通常来说，我们希望镜像能提供一个基本的操作系统环境，用户可以根据需要安装和配置软件。这样的镜像我们称作 base 镜像。</p>
+<p>我们下一节讨论 base </p>
+<h3 id="base-镜像"><a href="#base-镜像" class="headerlink" title="base 镜像"></a>base 镜像</h3><p>base 镜像有两层含义：<br>1、不依赖其他镜像，从 scratch 构建。<br>2、其他镜像可以之为基础进行扩展。</p>
+<p>所以，能称作 base 镜像的通常都是各种 Linux 发行版的 Docker 镜像，比如 Ubuntu, Debian, CentOS 等。</p>
+<p>我们以 CentOS 为例考察 base 镜像包含哪些内容。<br>下载镜像：</p>
+<p>docker pull centos</p>
+<p>查看镜像信息：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/5.bmp" alt><br>镜像大小不到 200MB。</p>
+<p>等一下！<br>一个 CentOS 才 200MB ？<br>平时我们安装一个 CentOS 至少都有几个 GB，怎么可能才 200MB !</p>
+<p>相信这是几乎所有 Docker 初学者都会有的疑问，包括我自己。下面我们来解释这个问题。</p>
+<p>Linux 操作系统由内核空间和用户空间组成。如下图所示：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/6.bmp" alt></p>
+<p><strong>rootfs</strong><br>内核空间是 kernel，Linux 刚启动时会加载 bootfs 文件系统，之后 bootfs 会被卸载掉。</p>
+<p>用户空间的文件系统是 rootfs，包含我们熟悉的 /dev, /proc, /bin 等目录。</p>
+<p>对于 base 镜像来说，底层直接用 Host 的 kernel，自己只需要提供 rootfs 就行了。</p>
+<p>而对于一个精简的 OS，rootfs 可以很小，只需要包括最基本的命令、工具和程序库就可以了。相比其他 Linux 发行版，CentOS 的 rootfs 已经算臃肿的了，alpine 还不到 10MB。</p>
+<p>我们平时安装的 CentOS 除了 rootfs 还会选装很多软件、服务、图形桌面等，需要好几个 GB 就不足为奇了。</p>
+<p><strong>base 镜像提供的是最小安装的 Linux 发行版。</strong><br>下面是 CentOS 镜像的 Dockerfile 的内容：<br><img src="6https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/7.bmp" alt><br>第二行 ADD 指令添加到镜像的 tar 包就是 CentOS 7 的 rootfs。在制作镜像时，这个 tar 包会自动解压到 / 目录下，生成 /dev, /porc, /bin 等目录。</p>
+<p>注：可在 Docker Hub 的镜像描述页面中查看 Dockerfile 。</p>
+<p><strong>支持运行多种 Linux OS</strong><br>不同 Linux 发行版的区别主要就是 rootfs。</p>
+<p>比如 Ubuntu 14.04 使用 upstart 管理服务，apt 管理软件包；而 CentOS 7 使用 systemd 和 yum。这些都是用户空间上的区别，Linux kernel 差别不大。</p>
+<p>所以 Docker 可以同时支持多种 Linux 镜像，模拟出多种操作系统环境。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/8.bmp" alt><br>上图 Debian 和 BusyBox（一种嵌入式 Linux）上层提供各自的 rootfs，底层共用 Docker Host 的 kernel。</p>
+<p>这里需要说明的是：<br>1、base 镜像只是在用户空间与发行版一致，kernel 版本与发型版是不同的。<br>例如 CentOS 7 使用 3.x.x 的 kernel，如果 Docker Host 是 Ubuntu 16.04（比如我们的实验环境），那么在 CentOS 容器中使用的实际是是 Host 4.x.x 的 kernel。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/9.bmp" alt><br>① Host kernel 为 4.4.0-31<br>② 启动并进入 CentOS 容器<br>③ 验证容器是 CentOS 7<br>④ 容器的 kernel 版本与 Host 一致<br>2、容器只能使用 Host 的 kernel，并且不能修改。所有容器都共用 host 的 kernel，在容器中没办法对 kernel 升级。如果容器对 kernel 版本有要求（比如应用只能在某个 kernel 版本下运行），则不建议用容器，这种场景虚拟机可能更合适。</p>
+<h3 id="镜像的分层结构"><a href="#镜像的分层结构" class="headerlink" title="镜像的分层结构"></a>镜像的分层结构</h3><p>Docker 支持通过扩展现有镜像，创建新的镜像。</p>
+<p>实际上，Docker Hub 中 99% 的镜像都是通过在 base 镜像中安装和配置需要的软件构建出来的。比如我们现在构建一个新的镜像，Dockerfile 如下：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/10.bmp" alt></p>
+<p>① 新镜像不再是从 scratch 开始，而是直接在 Debian base 镜像上构建。<br>② 安装 emacs 编辑器。<br>③ 安装 apache2。<br>④ 容器启动时运行 bash。</p>
+<p>构建过程如下图所示：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/11.bmp" alt><br>可以看到，新镜像是从 base 镜像一层一层叠加生成的。每安装一个软件，就在现有镜像的基础上增加一层。</p>
+<p>问什么 Docker 镜像要采用这种分层结构呢？</p>
+<p>最大的一个好处就是 - 共享资源。</p>
+<p>比如：有多个镜像都从相同的 base 镜像构建而来，那么 Docker Host 只需在磁盘上保存一份 base 镜像；同时内存中也只需加载一份 base 镜像，就可以为所有容器服务了。而且镜像的每一层都可以被共享，我们将在后面更深入地讨论这个特性。</p>
+<p>这时可能就有人会问了：如果多个容器共享一份基础镜像，当某个容器修改了基础镜像的内容，比如 /etc 下的文件，这时其他容器的 /etc 是否也会被修改？</p>
+<p>答案是不会！<br>修改会被限制在单个容器内。<br>这就是我们接下来要学习的容器 Copy-on-Write 特性。<br><strong>可写的容器层</strong><br>当容器启动时，一个新的可写层被加载到镜像的顶部。<br>这一层通常被称作“容器层”，“容器层”之下的都叫“镜像层”。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/12.jpg" alt><br>所有对容器的改动 - 无论添加、删除、还是修改文件都只会发生在容器层中。</p>
+<p><strong>只有容器层是可写的，容器层下面的所有镜像层都是只读的。</strong><br>下面我们深入讨论容器层的细节。</p>
+<p>镜像层数量可能会很多，所有镜像层会联合在一起组成一个统一的文件系统。如果不同层中有一个相同路径的文件，比如 /a，上层的 /a 会覆盖下层的 /a，也就是说用户只能访问到上层中的文件 /a。在容器层中，用户看到的是一个叠加之后的文件系统。<br><strong>添加文件</strong><br>在容器中创建文件时，新文件被添加到容器层中。</p>
+<p><strong>读取文件</strong><br>在容器中读取某个文件时，Docker 会从上往下依次在各镜像层中查找此文件。一旦找到，打开并读入内存。</p>
+<p><strong>修改文件</strong><br>在容器中修改已存在的文件时，Docker 会从上往下依次在各镜像层中查找此文件。一旦找到，立即将其复制到容器层，然后修改之。</p>
+<p><strong>删除文件</strong> </p>
+<p>在容器中删除文件时，Docker 也是从上往下依次在镜像层中查找此文件。找到后，会在容器层中记录下此删除操作。<br>只有当需要修改时才复制一份数据，这种特性被称作 Copy-on-Write。可见，容器层保存的是镜像变化的部分，不会对镜像本身进行任何修改。</p>
+<p>这样就解释了我们前面提出的问题：容器层记录对镜像的修改，所有镜像层都是只读的，不会被容器修改，所以<strong>镜像可以被多个容器共享</strong>。</p>
+<h3 id="构建镜像"><a href="#构建镜像" class="headerlink" title="构建镜像"></a>构建镜像</h3><p>对于 Docker 用户来说，最好的情况是不需要自己创建镜像。几乎所有常用的数据库、中间件、应用软件等都有现成的 Docker 官方镜像或其他人和组织创建的镜像，我们只需要稍作配置就可以直接使用。</p>
+<p>使用现成镜像的好处除了省去自己做镜像的工作量外，更重要的是可以利用前人的经验。特别是使用那些官方镜像，因为 Docker 的工程师知道如何更好的在容器中运行软件。</p>
+<p>当然，某些情况下我们也不得不自己构建镜像，比如：</p>
+<ol>
+<li><p>找不到现成的镜像，比如自己开发的应用程序。</p>
+</li>
+<li><p>需要在镜像中加入特定的功能，比如官方镜像几乎都不提供 ssh。</p>
+</li>
+</ol>
+<p>所以本节我们将介绍构建镜像的方法。同时分析构建的过程也能够加深我们对前面镜像分层结构的理解。</p>
+<p>Docker 提供了两种构建镜像的方法：</p>
+<ol>
+<li>docker commit 命令</li>
+<li>Dockerfile 构建文件</li>
+</ol>
+<p><strong>docker commit</strong><br>docker commit 命令是创建新镜像最直观的方法，其过程包含三个步骤：</p>
+<ol>
+<li>运行容器</li>
+<li>修改容器</li>
+<li>将容器保存为新的镜像</li>
+</ol>
+<p>举个例子：在 ubuntu base 镜像中安装 vi 并保存为新镜像。</p>
+<ol>
+<li>第一步， 运行容器<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/13.bmp" alt></li>
+</ol>
+<p>-it 参数的作用是以交互模式进入容器，并打开终端。412b30588f4a 是容器的内部 ID。</p>
+<ol start="2">
+<li><p>安装 vi<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/14.bmp" alt><br>确认 vi 没有安装。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/15.bmp" alt><br>安装 vi。</p>
+</li>
+<li><p>保存为新镜像<br>在新窗口中查看当前运行的容器。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/16.bmp" alt><br>silly_goldberg 是 Docker 为我们的容器随机分配的名字。</p>
+</li>
+</ol>
+<p>执行 docker commit 命令将容器保存为镜像。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/17.bmp" alt><br>新镜像命名为 ubuntu-with-vi。</p>
+<p>查看新镜像的属性。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/18.bmp" alt><br>从 size 上看到镜像因为安装了软件而变大了。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/19.bmp" alt><br>从新镜像启动容器，验证 vi 已经可以使用。<br>以上演示了如何用 docker commit 创建新镜像。然而，Docker 并不建议用户通过这种方式构建镜像。原因如下：<br><strong>1. 这是一种手工创建镜像的方式，容易出错，效率低且可重复性弱。比如要在 debian base 镜像中也加入 vi，还得重复前面的所有步骤。</strong></p>
+<p><strong>2. 更重要的：使用者并不知道镜像是如何创建出来的，里面是否有恶意程序。也就是说无法对镜像进行审计，存在安全隐患。</strong></p>
+<p>既然 docker commit 不是推荐的方法，我们干嘛还要花时间学习呢？</p>
+<p>原因是：即便是用 Dockerfile（推荐方法）构建镜像，底层也 docker commit 一层一层构建新镜像的。学习 docker commit 能够帮助我们更加深入地理解构建过程和镜像的分层结构。</p>
+<h3 id="Dockerfile-构建镜像"><a href="#Dockerfile-构建镜像" class="headerlink" title="Dockerfile 构建镜像"></a>Dockerfile 构建镜像</h3><p>Dockerfile 是一个文本文件，记录了镜像构建的所有步骤。</p>
+<p><strong>第一个 Dockerfile</strong></p>
+<p>用 Dockerfile 创建上节的 ubuntu-with-vi，其内容则为：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/20.bmp" alt></p>
+<p>下面我们运行 docker build 命令构建镜像并详细分析每个细节。</p>
+<p>root@ubuntu:<del># pwd         ①<br>/root<br>root@ubuntu:</del># ls          ②<br>Dockerfile<br>root@ubuntu:~# docker build -t ubuntu-with-vi-dockerfile .        ③<br>Sending build context to Docker daemon 32.26 kB           ④<br>Step 1 : FROM ubuntu           ⑤<br> —&gt; f753707788c5<br>Step 2 : RUN apt-get update &amp;&amp; apt-get install -y vim           ⑥<br> —&gt; Running in 9f4d4166f7e3             ⑦   </p>
+<p>……   </p>
+<p>Setting up vim (2:7.4.1689-3ubuntu1.1) …<br> —&gt; 35ca89798937           ⑧<br>Removing intermediate container 9f4d4166f7e3          ⑨<br>Successfully built 35ca89798937           ⑩<br>root@ubuntu:~#   </p>
+<p>① 当前目录为 /root。</p>
+<p>② Dockerfile 准备就绪。</p>
+<p>③ 运行 docker build 命令，-t 将新镜像命名为 ubuntu-with-vi-dockerfile，命令末尾的 . 指明 build context 为当前目录。Docker 默认会从 build context 中查找 Dockerfile 文件，我们也可以通过 -f 参数指定 Dockerfile 的位置。</p>
+<p>④ 从这步开始就是镜像真正的构建过程。 首先 Docker 将 build context 中的所有文件发送给 Docker daemon。build context 为镜像构建提供所需要的文件或目录。<br>Dockerfile 中的 ADD、COPY 等命令可以将 build context 中的文件添加到镜像。此例中，build context 为当前目录 /root，该目录下的所有文件和子目录都会被发送给 Docker daemon。</p>
+<p>所以，使用 build context 就得小心了，不要将多余文件放到 build context，特别不要把 /、/usr 作为 build context，否则构建过程会相当缓慢甚至失败。</p>
+<p>⑤ Step 1：执行 FROM，将 ubuntu 作为 base 镜像。<br>ubuntu 镜像 ID 为 f753707788c5。</p>
+<p>⑥ Step 2：执行 RUN，安装 vim，具体步骤为 ⑦、⑧、⑨。</p>
+<p>⑦ 启动 ID 为 9f4d4166f7e3 的临时容器，在容器中通过 apt-get 安装 vim。</p>
+<p>⑧ 安装成功后，将容器保存为镜像，其 ID 为 35ca89798937。<br>这一步底层使用的是类似 docker commit 的命令。</p>
+<p>⑨ 删除临时容器 9f4d4166f7e3。</p>
+<p>⑩ 镜像构建成功。<br>通过 docker images 查看镜像信息。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/21.bmp" alt></p>
+<p>镜像 ID 为 35ca89798937，与构建时的输出一致。</p>
+<p>在上面的构建过程中，我们要特别注意指令 RUN 的执行过程 ⑦、⑧、⑨。Docker 会在启动的临时容器中执行操作，并通过 commit 保存为新的镜像。</p>
+<p><strong>查看镜像分层结构</strong></p>
+<p>ubuntu-with-vi-dockerfile 是通过在 base 镜像的顶部添加一个新的镜像层而得到的。</p>
+<p><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/22.bmp" alt><br>这个新镜像层的内容由 RUN apt-get update &amp;&amp; apt-get install -y vim 生成。这一点我们可以通过 docker history 命令验证。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/23.bmp" alt><br>docker history 会显示镜像的构建历史，也就是 Dockerfile 的执行过程。</p>
+<p>ubuntu-with-vi-dockerfile 与 ubuntu 镜像相比，确实只是多了顶部的一层 35ca89798937，由 apt-get 命令创建，大小为 97.07MB。docker history 也向我们展示了镜像的分层结构，每一层由上至下排列。</p>
+<p>注： 表示无法获取 IMAGE ID，通常从 Docker Hub 下载的镜像会有这个问题。</p>
+<h3 id="镜像的缓存特性"><a href="#镜像的缓存特性" class="headerlink" title="镜像的缓存特性"></a>镜像的缓存特性</h3><p>Docker 会缓存已有镜像的镜像层，构建新镜像时，如果某镜像层已经存在，就直接使用，无需重新创建。</p>
+<p>举例说明。<br>在前面的 Dockerfile 中添加一点新内容，往镜像中复制一个文件：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/24.bmp" alt></p>
+<pre><code>root@ubuntu:~# ls           ①
+Dockerfile  testfile
+root@ubuntu:~#
+root@ubuntu:~# docker build -t ubuntu-with-vi-dockerfile-2 .
+Sending build context to Docker daemon 32.77 kB
+Step 1 : FROM ubuntu
+ ---&gt; f753707788c5
+Step 2 : RUN apt-get update &amp;&amp; apt-get install -y vim
+ ---&gt; Using cache         ②
+ ---&gt; 35ca89798937
+Step 3 : COPY testfile /          ③
+ ---&gt; 8d02784a78f4
+Removing intermediate container bf2b4040f4e9
+Successfully built 8d02784a78f4</code></pre><p>① 确保 testfile 已存在。</p>
+<p>② <strong>重点在这里</strong>：之前已经运行过相同的 RUN 指令，这次直接使用缓存中的镜像层 35ca89798937。</p>
+<p>③ 执行 COPY 指令。<br>其过程是启动临时容器，复制 testfile，提交新的镜像层 8d02784a78f4，删除临时容器。</p>
+<p>在 ubuntu-with-vi-dockerfile 镜像上直接添加一层就得到了新的镜像 ubuntu-with-vi-dockerfile-2。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/25.bmp" alt><br>如果我们希望在构建镜像时不使用缓存，可以在 <strong>docker build</strong> 命令中加上 <strong>–no-cache</strong> 参数。</p>
+<p>Dockerfile 中每一个指令都会创建一个镜像层，上层是依赖于下层的。无论什么时候，只要某一层发生变化，其上面所有层的缓存都会失效。</p>
+<p>也就是说，如果我们改变 Dockerfile 指令的执行顺序，或者修改或添加指令，都会使缓存失效。</p>
+<p>举例说明，比如交换前面 RUN 和 COPY 的顺序：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/26.bmp" alt><br>虽然在逻辑上这种改动对镜像的内容没有影响，但由于分层的结构特性，Docker 必须重建受影响的镜像层。</p>
+<pre><code>root@ubuntu:~# docker build -t ubuntu-with-vi-dockerfile-3 .
+Sending build context to Docker daemon 37.89 kB
+Step 1 : FROM ubuntu
+ ---&gt; f753707788c5
+Step 2 : COPY testfile /
+ ---&gt; bc87c9710f40
+Removing intermediate container 04ff324d6af5
+Step 3 : RUN apt-get update &amp;&amp; apt-get install -y vim
+ ---&gt; Running in 7f0fcb5ee373
+Get:1 http://archive.ubuntu.com/ubuntu xenial InRelease [247 kB]
+......</code></pre><p>从上面的输出可以看到生成了新的镜像层 bc87c9710f40，缓存已经失效。</p>
+<p>除了构建时使用缓存，Docker 在下载镜像时也会使用。例如我们下载 httpd 镜像。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/27.bmp" alt><br>docker pull 命令输出显示第一层（base 镜像）已经存在，不需要下载。</p>
+<p>由 Dockerfile 可知 httpd 的 base 镜像为 debian，正好之前已经下载过 debian 镜像，所以有缓存可用。通过 docker history 可以进一步验证。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/28.bmp" alt></p>
+<h3 id="调试-Dockerfile"><a href="#调试-Dockerfile" class="headerlink" title="调试 Dockerfile"></a>调试 Dockerfile</h3><p>包括 Dockerfile 在内的任何脚本和程序都会出错。有错并不可怕，但必须有办法排查，所以本节讨论如何 debug Dockerfile。</p>
+<p>先回顾一下通过 Dockerfile 构建镜像的过程：</p>
+<p>1、从 base 镜像运行一个容器。<br>2、执行一条指令，对容器做修改。<br>3、执行类似 docker commit 的操作，生成一个新的镜像层。<br>4、Docker 再基于刚刚提交的镜像运行一个新容器。<br>5、重复 2-4 步，直到 Dockerfile 中的所有指令执行完毕。</p>
+<p>从这个过程可以看出，如果 Dockerfile 由于某种原因执行到某个指令失败了，我们也将能够得到前一个指令成功执行构建出的镜像，这对调试 Dockerfile 非常有帮助。我们可以运行最新的这个镜像定位指令失败的原因。</p>
+<p>我们来看一个调试的例子。Dockerfile 内容如下：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/29.bmp" alt><br>执行 docker build：</p>
+<p><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/30.bmp" alt><br>Dockerfile 在执行第三步 RUN 指令时失败。我们可以利用第二步创建的镜像 22d31cc52b3e 进行调试，方式是通过 docker run -it 启动镜像的一个容器。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/31.bmp" alt><br>手工执行 RUN 指令很容易定位失败的原因是 busybox 镜像中没有 bash。虽然这是个极其简单的例子，但它很好地展示了调试 Dockerfile 的方法。</p>
+<h3 id="Dockerfile常用指令"><a href="#Dockerfile常用指令" class="headerlink" title="Dockerfile常用指令"></a>Dockerfile常用指令</h3><p><strong>FROM</strong><br>指定 base 镜像。</p>
+<p><strong>MAINTAINER</strong><br>设置镜像的作者，可以是任意字符串。</p>
+<p><strong>COPY</strong><br>将文件从 build context 复制到镜像。<br>COPY 支持两种形式：</p>
+<p>COPY src dest</p>
+<p>COPY [“src”, “dest”]</p>
+<p>注意：src 只能指定 build context 中的文件或目录。</p>
+<p><strong>ADD</strong><br>与 COPY 类似，从 build context 复制文件到镜像。不同的是，如果 src 是归档文件（tar, zip, tgz, xz 等），文件会被自动解压到 dest。</p>
+<p><strong>ENV</strong><br>设置环境变量，环境变量可被后面的指令使用。例如：</p>
+<pre><code>
+ENV MY_VERSION 1.3
+
+RUN apt-get install -y mypackage=$MY_VERSION
+</code></pre><p><strong>EXPOSE</strong><br>指定容器中的进程会监听某个端口，Docker 可以将该端口暴露出来。我们会在容器网络部分详细讨论。</p>
+<p><strong>VOLUME</strong><br>将文件或目录声明为 volume。我们会在容器存储部分详细讨论。</p>
+<p><strong>WORKDIR</strong><br>为后面的 RUN, CMD, ENTRYPOINT, ADD 或 COPY 指令设置镜像中的当前工作目录。</p>
+<p><strong>RUN</strong><br>在容器中运行指定的命令。</p>
+<p><strong>CMD</strong><br>容器启动时运行指定的命令。</p>
+<p>Dockerfile 中可以有多个 CMD 指令，但只有最后一个生效。CMD 可以被 docker run 之后的参数替换。</p>
+<p><strong>ENTRYPOINT</strong><br>设置容器启动时运行的命令。<br>Dockerfile 中可以有多个 ENTRYPOINT 指令，但只有最后一个生效。CMD 或 docker run 之后的参数会被当做参数传递给 ENTRYPOINT。</p>
+<p>下面我们来看一个较为全面的 Dockerfile：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/32.bmp" alt><br>注：Dockerfile 支持以“#”开头的注释。</p>
+<p>构建镜像：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/33.bmp" alt><br>① 构建前确保 build context 中存在需要的文件。</p>
+<p>② 依次执行 Dockerfile 指令，完成构建。</p>
+<p>运行容器，验证镜像内容<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/34.bmp" alt><br>① 进入容器，当前目录即为 WORKDIR。<br>如果 WORKDIR 不存在，Docker 会自动为我们创建。</p>
+<p>② WORKDIR 中保存了我们希望的文件和目录：<br>目录 bunch：由 ADD 指令从 build context 复制的归档文件 bunch.tar.gz，已经自动解压。<br>文件 tmpfile1：由 RUN 指令创建。<br>文件 tmpfile2：由 COPY 指令从 build context 复制。</p>
+<p>③ ENV 指令定义的环境变量已经生效。</p>
+<h3 id="RUN-vs-CMD-vs-ENTRYPOINT"><a href="#RUN-vs-CMD-vs-ENTRYPOINT" class="headerlink" title="RUN vs CMD vs ENTRYPOINT"></a>RUN vs CMD vs ENTRYPOINT</h3><p>RUN、CMD 和 ENTRYPOINT 这三个 Dockerfile 指令看上去很类似，很容易混淆。本节将通过实践详细讨论它们的区别。<br>简单的说：</p>
+<p>1、RUN 执行命令并创建新的镜像层，RUN 经常用于安装软件包。</p>
+<p>2、CMD 设置容器启动后默认执行的命令及其参数，但 CMD 能够被 docker run 后面跟的命令行参数替换。</p>
+<p>3、ENTRYPOINT 配置容器启动时运行的命令。</p>
+<p>下面我们详细分析。</p>
+<p><strong>Shell 和 Exec 格式</strong><br>我们可用两种方式指定 RUN、CMD 和 ENTRYPOINT 要运行的命令：Shell 格式和 Exec 格式，二者在使用上有细微的区别。</p>
+<p>简单的说：</p>
+<p>1、RUN 执行命令并创建新的镜像层，RUN 经常用于安装软件包。</p>
+<p>2、CMD 设置容器启动后默认执行的命令及其参数，但 CMD 能够被 docker run 后面跟的命令行参数替换。</p>
+<p>3、ENTRYPOINT 配置容器启动时运行的命令。</p>
+<p>下面我们详细分析。<br><strong>Shell 和 Exec 格式</strong><br>我们可用两种方式指定 RUN、CMD 和 ENTRYPOINT 要运行的命令：Shell 格式和 Exec 格式，二者在使用上有细微的区别。</p>
+<blockquote>
+<p>Shell 格式<br><instruction> <command></instruction></p>
+</blockquote>
+<blockquote>
+</blockquote>
+<p>例如：<br>RUN apt-get install python3<br>CMD echo “Hello world”<br>ENTRYPOINT echo “Hello world”</p>
+<p>当指令执行时，shell 格式底层会调用 /bin/sh -c <command>。</p>
+<p>例如下面的 Dockerfile 片段：</p>
+<pre><code>ENV name yunze  
+ENTRYPOINT echo &quot;Hello, $name&quot; </code></pre><p>执行 docker run <image> 将输出：</image></p>
+<p>Hello, yunze</p>
+<p>注意环境变量 name 已经被值 yunze 替换。</p>
+<p>下面来看 Exec 格式。<br>Exec 格式<br><instruction> [“executable”, “param1”, “param2”, …]</instruction></p>
+<p>例如：</p>
+<pre><code>RUN [&quot;apt-get&quot;, &quot;install&quot;, &quot;python3&quot;]  
+CMD [&quot;/bin/echo&quot;, &quot;Hello world&quot;]  
+ENTRYPOINT [&quot;/bin/echo&quot;, &quot;Hello world&quot;]</code></pre><p>当指令执行时，会直接调用 <command>，不会被 shell 解析。<br>例如下面的 Dockerfile 片段：</p>
+<pre><code>ENV name yunze
+ENTRYPOINT [&quot;/bin/echo&quot;, &quot;Hello, $name&quot;]</code></pre><p>运行容器将输出：</p>
+<pre><code>Hello, $name</code></pre><p><strong>注意</strong>环境变量“name”没有被替换。<br>如果希望使用环境变量，照如下修改</p>
+<pre><code>ENV name yunze 
+ENTRYPOINT [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;echo Hello, $name&quot;]</code></pre><p>运行容器将输出：</p>
+<pre><code>Hello, yunze</code></pre><p><strong>CMD 和 ENTRYPOINT 推荐使用 Exec 格式</strong>，因为指令可读性更强，更容易理解。RUN 则两种格式都可以。</p>
+<p><strong>RUN</strong><br>RUN 指令通常用于安装应用和软件包。</p>
+<p>RUN 在当前镜像的顶部执行命令，并通过创建新的镜像层。Dockerfile 中常常包含多个 RUN 指令。</p>
+<p>RUN 有两种格式：</p>
+<p>Shell 格式：RUN<br>Exec 格式：RUN [“executable”, “param1”, “param2”]<br>下面是使用 RUN 安装多个包的例子：</p>
+<pre><code>RUN apt-get update &amp;&amp; apt-get install -y \  
+ bzr \
+ cvs \
+ git \
+ mercurial \
+ subversion</code></pre><p>注意：apt-get update 和 apt-get install 被放在一个 RUN 指令中执行，这样能够保证每次安装的是最新的包。如果 apt-get install 在单独的 RUN 中执行，则会使用 apt-get update 创建的镜像层，而这一层可能是很久以前缓存的。</p>
+<p><strong>CMD</strong><br>CMD 指令允许用户指定容器的默认执行的命令。</p>
+<p>此命令会在容器启动且 docker run 没有指定其他命令时运行。</p>
+<p>1、如果 docker run 指定了其他命令，CMD 指定的默认命令将被忽略。</p>
+<p>2、如果 Dockerfile 中有多个 CMD 指令，只有最后一个 CMD 有效。</p>
+<p>CMD 有三种格式：</p>
+<p>1、Exec 格式：CMD [“executable”,”param1”,”param2”]<br>这是 CMD 的推荐格式。</p>
+<p>2、CMD [“param1”,”param2”] 为 ENTRYPOINT 提供额外的参数，此时 ENTRYPOINT 必须使用 Exec 格式。</p>
+<p>3、Shell 格式：CMD command param1 param2</p>
+<p>Exec 和 Shell 格式前面已经介绍过了。<br>第二种格式 CMD [“param1”,”param2”] 要与 Exec 格式 的 ENTRYPOINT 指令配合使用，其用途是为 ENTRYPOINT 设置默认的参数。我们将在后面讨论 ENTRYPOINT 时举例说明。</p>
+<p>下面看看 CMD 是如何工作的。Dockerfile 片段如下：</p>
+<blockquote>
+<p>CMD echo “Hello world”</p>
+</blockquote>
+<p>运行容器 docker run -it [image] 将输出：</p>
+<blockquote>
+<p>Hello world</p>
+</blockquote>
+<p>但当后面加上一个命令，比如 docker run -it [image] /bin/bash，CMD 会被忽略掉，命令 bash 将被执行：</p>
+<blockquote>
+<p>root@10a32dc7d3d3:/#</p>
+</blockquote>
+<p><strong>ENTRYPOINT</strong><br>ENTRYPOINT 指令可让容器以应用程序或者服务的形式运行。</p>
+<p>ENTRYPOINT 看上去与 CMD 很像，它们都可以指定要执行的命令及其参数。不同的地方在于 ENTRYPOINT 不会被忽略，一定会被执行，即使运行 docker run 时指定了其他命令。</p>
+<p>ENTRYPOINT 有两种格式：</p>
+<p>1、Exec 格式：ENTRYPOINT [“executable”, “param1”, “param2”] 这是 ENTRYPOINT 的推荐格式。</p>
+<p>2、Shell 格式：ENTRYPOINT command param1 param2</p>
+<p>在为 ENTRYPOINT 选择格式时必须小心，因为这两种格式的效果差别很大。</p>
+<p><strong>Exec 格式</strong><br>ENTRYPOINT 的 Exec 格式用于设置要执行的命令及其参数，同时可通过 CMD 提供额外的参数。</p>
+<p>ENTRYPOINT 中的参数始终会被使用，而 CMD 的额外参数可以在容器启动时动态替换掉。</p>
+<p>比如下面的 Dockerfile 片段：</p>
+<pre><code>ENTRYPOINT [&quot;/bin/echo&quot;, &quot;Hello&quot;]  
+CMD [&quot;world&quot;]</code></pre><p>当容器通过 docker run -it [image] 启动时，输出为：</p>
+<pre><code>Hello world</code></pre><p>而如果通过 docker run -it [image] yunze 启动，则输出为：</p>
+<pre><code>Hello yunze</code></pre><p><strong>Shell 格式</strong><br>ENTRYPOINT 的 Shell 格式会忽略任何 CMD 或 docker run 提供的参数。</p>
+<p><strong>最佳实践</strong><br>1、使用 RUN 指令安装应用和软件包，构建镜像。<br>2、如果 Docker 镜像的用途是运行应用程序或服务，比如运行一个 MySQL，应该优先使用 Exec 格式的 ENTRYPOINT 指令。CMD 可为 ENTRYPOINT 提供额外的默认参数，同时可利用 docker run 命令行替换默认参数。<br>3、如果想为容器设置默认的启动命令，可使用 CMD 指令。用户可在 docker run 命令行中替换此默认命令。</p>
+<p><strong>镜像命名的最佳实践</strong><br>我们已经学会构建自己的镜像了。接下来的问题是如何在多个 Docker Host 上使用镜像。<br>这里有几种可用的方法：</p>
+<p>1、用相同的 Dockerfile 在其他 host 构建镜像。</p>
+<p>2、将镜像上传到公共 Registry（比如 Docker Hub），Host 直接下载使用。</p>
+<p>3、搭建私有的 Registry 供本地 Host 使用。</p>
+<p>第一种方法没什么特别的，前面已经讨论很多了。我们将讨论如何使用公共和私有 Registry 分发镜像。</p>
+<p><strong>为镜像命名</strong><br>无论采用何种方式保存和分发镜像，首先都得给镜像命名。</p>
+<p>当我们执行 docker build 命令时已经为镜像取了个名字，例如前面：</p>
+<blockquote>
+<p>docker build -t ubuntu-with-vi</p>
+</blockquote>
+<p>这里的 ubuntu-with-vi 就是镜像的名字。通过 dock images 可以查看镜像的信息。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/35.bmp" alt><br>这里注意到 ubuntu-with-vi 对应的是 REPOSITORY，而且还有一个叫 latest 的 TAG。</p>
+<p>实际上一个特定镜像的名字由两部分组成：repository 和 tag。</p>
+<blockquote>
+<p>[image name] = [repository]:[tag]</p>
+</blockquote>
+<p>如果执行 docker build 时没有指定 tag，会使用默认值 latest。其效果相当于：</p>
+<blockquote>
+<p>docker build -t ubuntu-with-vi:latest</p>
+</blockquote>
+<p>tag 常用于描述镜像的版本信息，比如 httpd 镜像：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/36.bmp" alt></p>
+<p>当然 tag 可以是任意字符串，比如 ubuntu 镜像：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/37.bmp" alt></p>
+<p><strong>小心 latest tag</strong></p>
+<p>千万别被 latest tag 给误导了。latest 其实并没有什么特殊的含义。当没指明镜像 tag 时，Docker 会使用默认值 latest，仅此而已。</p>
+<p>虽然 Docker Hub 上很多 repository 将 latest 作为最新稳定版本的别名，但这只是一种约定，而不是强制规定。</p>
+<p>所以我们在使用镜像时最好还是避免使用 latest，明确指定某个 tag，比如 httpd:2.3，ubuntu:xenial。</p>
+<p><strong>tag 使用最佳实践</strong><br>借鉴软件版本命名方式能够让用户很好地使用镜像。</p>
+<p>一个高效的版本命名方案可以让用户清楚地知道当前使用的是哪个镜像，同时还可以保持足够的灵活性。</p>
+<p>每个 repository 可以有多个 tag，而多个 tag 可能对应的是同一个镜像。下面通过例子为大家介绍 Docker 社区普遍使用的 tag 方案。</p>
+<p>假设我们现在发布了一个镜像 myimage，版本为 v1.9.1。那么我们可以给镜像打上四个 tag：1.9.1、1.9、1 和 latest。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/38.bmp" alt><br>我们可以通过 docker tag 命令方便地给镜像打 tag。</p>
+<blockquote>
+<p>docker tag myimage-v1.9.1 myimage:1<br>docker tag myimage-v1.9.1 myimage:1.9<br>docker tag myimage-v1.9.1 myimage:1.9.1<br>docker tag myimage-v1.9.1 myimage:latest</p>
+</blockquote>
+<p>过了一段时间，我们发布了 v1.9.2。这时可以打上 1.9.2 的 tag，并将 1.9、1 和 latest 从 v1.9.1 移到 v1.9.2。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/39.bmp" alt></p>
+<blockquote>
+<p>命令为：<br>docker tag myimage-v1.9.2 myimage:1<br>docker tag myimage-v1.9.2 myimage:1.9<br>docker tag myimage-v1.9.2 myimage:1.9.2<br>docker tag myimage-v1.9.2 myimage:latest</p>
+</blockquote>
+<p>之后，v2.0.0 发布了。这时可以打上 2.0.0、2.0 和 2 的 tag，并将 latest 移到 v2.0.0。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/40.bmp" alt></p>
+<blockquote>
+<p>命令为：<br>docker tag myimage-v2.0.0 myimage:2<br>docker tag myimage-v2.0.0 myimage:2.0<br>docker tag myimage-v2.0.0 myimage:2.0.0<br>docker tag myimage-v2.0.0 myimage:latest</p>
+</blockquote>
+<p>这种 tag 方案使镜像的版本很直观，用户在选择非常灵活：</p>
+<p>1、myimage:1 始终指向 1 这个分支中最新的镜像。<br>2、myimage:1.9 始终指向 1.9.x 中最新的镜像。<br>3、myimage:latest 始终指向所有版本中最新的镜像。<br>4、如果想使用特定版本，可以选择 myimage:1.9.1、myimage:1.9.2 或 myimage:2.0.0。</p>
+<h3 id="使用公共-Registry"><a href="#使用公共-Registry" class="headerlink" title="使用公共 Registry"></a>使用公共 Registry</h3><p>保存和分发镜像的最直接方法就是使用 Docker Hub。</p>
+<p>Docker Hub 是 Docker 公司维护的公共 Registry。用户可以将自己的镜像保存到 Docker Hub 免费的 repository 中。如果不希望别人访问自己的镜像，也可以购买私有 repository。</p>
+<p>除了 Docker Hub，quay.io 是另一个公共 Registry，提供与 Docker Hub 类似的服务。<br>下面介绍如何用 Docker Hub 存取我们的镜像。</p>
+<p>1、首先得在 Docker Hub 上注册一个账号。</p>
+<p>2、在 Docker Host 上登录。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/41.bmp" alt><br>这里用的是我自己的账号，用户名为 cloudman6，输入密码后登录成功。</p>
+<p>3、修改镜像的 repository 使之与 Docker Hub 账号匹配。</p>
+<p>Docker Hub 为了区分不同用户的同名镜像，镜像的 registry 中要包含用户名，完整格式为：[username]/xxx:tag</p>
+<p>我们通过 docker tag 命令重命名镜像。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/42.bmp" alt><br>注：Docker 官方自己维护的镜像没有用户名，比如 httpd。</p>
+<p>4、通过 docker push 将镜像上传到 Docker Hub。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/43.bmp" alt><br>Docker 会上传镜像的每一层。因为 cloudman6/httpd:v1 这个镜像实际上跟官方的 httpd 镜像一模一样，Docker Hub 上已经有了全部的镜像层，所以真正上传的数据很少。同样的，如果我们的镜像是基于 base 镜像的，也只有新增加的镜像层会被上传。如果想上传同一 repository 中所有镜像，省略 tag 部分就可以了，例如<br>docker push cloudman6/httpd</p>
+<p>5、登录 <a href="https://hub.docker.com，在Public" target="_blank" rel="noopener">https://hub.docker.com，在Public</a> Repository 中就可以看到上传的镜像。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/44.bmp" alt></p>
+<p>6、这个镜像可被其他 Docker host 下载使用了。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/45.bmp" alt></p>
+<h3 id="搭建本地-Registry"><a href="#搭建本地-Registry" class="headerlink" title="搭建本地 Registry"></a>搭建本地 Registry</h3><p>Docker Hub 虽然非常方便，但还是有些限制，比如：</p>
+<p>1、需要 internet 连接，而且下载和上传速度慢。</p>
+<p>2、上传到 Docker Hub 的镜像任何人都能够访问，虽然可以用私有 repository，但不是免费的。</p>
+<p>3、安全原因很多组织不允许将镜像放到外网。</p>
+<p>解决方案就是搭建本地的 Registry。</p>
+<p>Docker 已经将 Registry 开源了，同时在 Docker Hub 上也有官方的镜像 registry。下面我们就在 Docker 中运行自己的 registry。</p>
+<p>1、启动 registry 容器。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/46.bmp" alt><br>我们使用的镜像是 <strong>registry:2</strong></p>
+<p><strong>-d</strong> 是后台启动容器。</p>
+<p><strong>-p</strong> 将容器的 5000 端口映射到 Host 的 5000 端口。5000 是 registry 服务端口。端口映射我们会在容器网络章节详细讨论。</p>
+<p><strong>-v</strong> 将容器 /var/lib/registry 目录映射到 Host 的 /myregistry，用于存放镜像数据。-v 的使用我们会在容器存储章节详细讨论。</p>
+<p>2、通过 docker tag 重命名镜像，使之与 registry 匹配。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/47.bmp" alt><br>我们在镜像的前面加上了运行 registry 的主机名称和端口。</p>
+<p>前面已经讨论了镜像名称由 repository 和 tag 两部分组成。而 repository 的完整格式为：[registry-host]:[port]/[username]/xxx</p>
+<p>只有 Docker Hub 上的镜像可以省略 [registry-host]:[port] 。</p>
+<p>3、通过 docker push 上传镜像。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/48.bmp" alt></p>
+<p>4、现在已经可通过 docker pull 从本地 registry 下载镜像了。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/49.bmp" alt><br>除了镜像的名称长一些（包含 registry host 和 port），使用方式完全一样。</p>
+<p>以上是搭建本地 registry 的简要步骤。当然 registry 也支持认证，https 安全传输等特性，具体可以参考官方文档 <a href="https://docs.docker.com/registry/configuration/" target="_blank" rel="noopener">https://docs.docker.com/registry/configuration/</a></p>
+<p><strong>Docker 镜像小结</strong><br>这一部分我们首先讨论了镜像的分层结构，然后学习了如何构建镜像，最后实践使用 Docker Hub 和本地 registry。</p>
+<p>下面是镜像的常用操作子命令：</p>
+<pre><code>images    显示镜像列表
+history   显示镜像构建历史
+commit    从容器创建新镜像
+build     从 Dockerfile 构建镜像
+tag       给镜像打 tag
+pull      从 registry 下载镜像
+push      将 镜像 上传到 registry
+rmi       删除 Docker host 中的镜像
+search    搜索 Docker Hub 中的镜像</code></pre><p>除了 rmi 和 search，其他命令都已经用过了。</p>
+<p><strong>rmi</strong><br>rmi 只能删除 host 上的镜像，不会删除 registry 的镜像。</p>
+<p>如果一个镜像对应了多个 tag，只有当最后一个 tag 被删除时，镜像才被真正删除。例如 host 中 debian 镜像有两个 tag：<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/50.bmp" alt><br>删除其中 debian:latest 只是删除了 latest tag，镜像本身没有删除。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/51.bmp" alt><br>只有当 debian:jessie 也被删除时，整个镜像才会被删除。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/52.bmp" alt><br><strong>search</strong><br>search 让我们无需打开浏览器，在命令行中就可以搜索 Docker Hub 中的镜像。<br><img src="https://github.com/lvyunze/image/raw/master/docker%E9%95%9C%E5%83%8F%E7%AF%87/53.bmp" alt><br>当然，如果想知道镜像都有哪些 tag，还是得访问 Docker Hub。</p>
+
+            </div>
+            <hr/>
+
+            
+            <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+
+            <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        <p class="reprint-tip">
+            <i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;
+            <span>转载规则</span>
+        </p>
+        
+            <div class="center-align">
+                <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh">
+                    <img alt=""
+                         style="border-width:0"
+                         src="https://i.creativecommons.org/l/by/4.0/88x31.png"/>
+                </a>
+            </div>
+            <br/>
+            <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
+                  property="dct:title" rel="dct:type">
+                    《docker镜像篇》
+                </span> 由
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/08/13/docker-jing-xiang-pian/" property="cc:attributionName"
+               rel="cc:attributionURL">
+                jack
+            </a> 采用
+            <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh">
+                知识共享署名 4.0 国际许可协议
+            </a>进行许可。
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2019/08/15/san-shu-zhi-he/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="三数之和">
+                        
+                        <span class="card-title">三数之和</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            题目描述给定一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？找出所有满足条件且不重复的三元组。
+注意：答案中不可以包含重复的三元组。
+
+例如, 给定数组 nums 
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-08-14
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/leetcode/" class="post-category" target="_blank">
+                                    leetcode
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/数组/" target="_blank">
+                        <span class="chip bg-color">数组</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/08/13/docker-qi-dong/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="docker启动">
+                        
+                        <span class="card-title">docker启动</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            容器启动过程如下：1、Docker 客户端执行 docker run 命令。2、Docker daemon 发现本地没有 httpd 镜像。3、daemon 从 Docker Hub 下载镜像。4、下载完成，镜像 httpd 被保存到本地。
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-08-12
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/docker/" class="post-category" target="_blank">
+                                    docker
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/docker启动/" target="_blank">
+                        <span class="chip bg-color">docker启动</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+</div>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fa fa-list"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+    
+
+</main>
+
+
+<footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+        
+
+            
+
+            
+			
+                <br>
+                
+                <span id="busuanzi_container_site_pv">
+                    <i class="fa fa-heart-o"></i>
+                    本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                </span>
+                
+                
+                <span id="busuanzi_container_site_uv">
+                    <i class="fa fa-users"></i>
+                    次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                </span>
+                
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/lvyunze" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:17817462542@163.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1531446765@qq.com" class="tooltipped" data-tooltip="QQ联系我: 1531446765@qq.com" data-position="top" data-delay="50">
+        <i class="fa fa-qq"></i>
+    </a>
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fa fa-rss"></i>
+    </a>
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+<!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+<!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+<script src="/libs/materialize/materialize.min.js"></script>
+<script src="/libs/masonry/masonry.pkgd.min.js"></script>
+<script src="/libs/aos/aos.js"></script>
+<script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+<script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+<script src="/js/matery.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+
+    <script src="/libs/others/clicklove.js"></script>
+
+
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

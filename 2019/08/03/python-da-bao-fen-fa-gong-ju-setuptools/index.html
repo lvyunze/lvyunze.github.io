@@ -1,0 +1,1078 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Python打包分发工具setuptools, 技术分享">
+    <meta name="description" content="setuptoolsPython打包分发工具setuptools:曾经 Python 的分发工具是 distutils，但它无法定义包之间的依赖关系。setuptools 则是它的增强版，能帮助我们更好的创建和分发 Python 包，尤其是">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Python打包分发工具setuptools | 云泽</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+
+<header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">云泽</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="/" class="waves-effect waves-light">
+            
+            <i class="fa fa-home"></i>
+            
+            <span>首页</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/tags" class="waves-effect waves-light">
+            
+            <i class="fa fa-tags"></i>
+            
+            <span>标签</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/categories" class="waves-effect waves-light">
+            
+            <i class="fa fa-bookmark"></i>
+            
+            <span>分类</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/archives" class="waves-effect waves-light">
+            
+            <i class="fa fa-archive"></i>
+            
+            <span>归档</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/about" class="waves-effect waves-light">
+            
+            <i class="fa fa-user-circle-o"></i>
+            
+            <span>关于</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/friends" class="waves-effect waves-light">
+            
+            <i class="fa fa-address-book"></i>
+            
+            <span>友情链接</span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">云泽</div>
+        <div class="logo-desc">
+            
+            云计算方向小哥
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li>
+            <a href="/" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-home"></i>
+                
+                首页
+            </a>
+        </li>
+        
+        <li>
+            <a href="/tags" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-tags"></i>
+                
+                标签
+            </a>
+        </li>
+        
+        <li>
+            <a href="/categories" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-bookmark"></i>
+                
+                分类
+            </a>
+        </li>
+        
+        <li>
+            <a href="/archives" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-archive"></i>
+                
+                归档
+            </a>
+        </li>
+        
+        <li>
+            <a href="/about" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-user-circle-o"></i>
+                
+                关于
+            </a>
+        </li>
+        
+        <li>
+            <a href="/friends" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-address-book"></i>
+                
+                友情链接
+            </a>
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/lvyunze" class="waves-effect waves-light" target="_blank">
+                <i class="fa fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/lvyunze" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/9.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        Python打包分发工具setuptools
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/Python打包分发工具setuptools/" target="_blank">
+                                <span class="chip bg-color">Python打包分发工具setuptools</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fa fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/python工具/" class="post-category" target="_blank">
+                                python工具
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2019-08-03
+                </div>
+
+                
+				
+				
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="setuptools"><a href="#setuptools" class="headerlink" title="setuptools"></a>setuptools</h2><p>Python打包分发工具setuptools:曾经 Python 的分发工具是 distutils，但它无法定义包之间的依赖关系。setuptools 则是它的增强版，能帮助我们更好的创建和分发 Python 包，尤其是具有复杂依赖关系的包。其通过添加一个基本的依赖系统以及许多相关功能，弥补了该缺陷。他还提供了自动包查询程序，用来自动获取包之间的依赖关系，并完成这些包的安装，大大降低了安装各种包的难度，使之更加方便,将程序打包以后可以可以安装到自己的虚拟环境中，也可以上传到PyPI，这样非常方便大项目开发</p>
+<h3 id="setuptools使用"><a href="#setuptools使用" class="headerlink" title="setuptools使用"></a>setuptools使用</h3><p>pip 安装：</p>
+<pre><code>$ pip install setuptools</code></pre><p>第一个安装文件<br>在目录 learn_setup 下新建安装文件 setup.py，然后创建包 myapp 模拟要打包源码包：</p>
+<pre><code>├── myapp
+│ └── __init__.py
+└── setup.py</code></pre><p>setup.py 文件内容如下：</p>
+<pre><code>from setuptools import setup
+
+setup(
+    name=&#39;firstApp001&#39;, # 应用名
+    version=&#39;0.0.1&#39;, # 版本号
+    packages=[&#39;myapp&#39;], # 包括在安装包内的 Python 包
+)</code></pre><p>使用安装文件创建 wheel<br>有了上面的 setup.py 文件，我们就可以打出各种安装包，主要分为两类：sdist 和 bdist。<br>Source distribution<br>使用 sdist 可以打包成 source distribution，支持的压缩格式有：<br><img src="https://github.com/lvyunze/image/raw/master/Python%E6%89%93%E5%8C%85%E5%88%86%E5%8F%91%E5%B7%A5%E5%85%B7setuptools/1.png" alt><br>使用方式为：</p>
+<pre><code>$ python setup.py sdist --formats=gztar,zip</code></pre><p>目录下便会多出 dist 和 *.egg-info 目录，dist 内保存了我们打好的包，上面命令使用 –formats 指定了打出 .tar.gz 和 .zip 包，如果不指定则如上表根据具体平台默认格式打包。<br>包的名称为 setup.py 中定义的 name, version以及指定的包格式，格式如：firstApp01-0.0.1.tar.gz。</p>
+<p>Built distribution<br>使用 bdist 可以打出 built distribution，和源码包相比，由于预先构建好，所以安装更快：<br><img src="https://github.com/lvyunze/image/raw/master/Python%E6%89%93%E5%8C%85%E5%88%86%E5%8F%91%E5%B7%A5%E5%85%B7setuptools/2.png" alt><br>使用上，和 sdist 一样，可以使用 –formats 指定包格式。如：</p>
+<pre><code>$ python setup.py bdist --formats=rpm</code></pre><p>同时为了简化操作，setuptools 提供了如下命令：<br><img src="https://github.com/lvyunze/image/raw/master/Python%E6%89%93%E5%8C%85%E5%88%86%E5%8F%91%E5%B7%A5%E5%85%B7setuptools/3.png" alt><br>所以上面打 rpm 包可以使用:</p>
+<pre><code>$ python setup.py bdist_rpm</code></pre><p>Wheel<br>Wheel 也是一种 built 包，而且是官方推荐的打包方式。也许你曾经遇见或使用过 egg 包，但现在 <a href="https://wheel.readthedocs.io/en/stable/" target="_blank" rel="noopener">wheel</a> 是官方推荐的打包方式<br>使用 wheel 打包，首先要安装 wheel：</p>
+<pre><code>$ pip install wheel</code></pre><p>然后使用 bdist_wheel 打包：</p>
+<pre><code>$ python setup.py bdist_wheel</code></pre><p>执行成功后，目录下除了 dist 和 *.egg-info 目录外，还有一个 build 目录用于存储打包中间数据。<br>wheel 包的名称如 firstApp01-0.0.1-py3-none-any.whl，其中 py3 指明只支持 Python3。可以使用参数 –universal，包名如 mfirstApp-0.0.1-py2.py3-none-any.whl，表明 wheel 包同时支持 Python2 和 Python3使用 universal 也成为通用 wheel 包，反之称为纯 wheel 包。</p>
+<p>安装 Wheel<br>上一节的示例应用没有任何内容。下面添加模块 greet 并重新打包。</p>
+<pre><code># greet.py
+def hello():
+    print(&#39;Hello, welcome to setuptools!&#39;)</code></pre><p>使用 bdist_wheel 再次打包后，我们可以使用 pip 安装到本地 Python 的 site-packages 目录。</p>
+<pre><code>$ pip install dist/fisrtApp001-0.0.1-py3-none-any.whl</code></pre><p>现在和其他使用 pip 安装的三方库一样使用：</p>
+<pre><code>from nyapp.greet import hello
+hello()</code></pre><p>应用开发过程中会频繁变更，每次安装都需要先卸载旧版本很麻烦。使用 develop 开发模式安装的话，实际代码不会拷贝到 site-packages 下，而是除一个指向当前应用的链接（*.egg-link）。这样当前位置的源码改动就会马上反映到 site-packages。使用如下</p>
+<pre><code>$ pip install -e .  # 或者 python setup.py develop</code></pre><p>要是需要卸载，就使用pip uninstall<br>上传 Wheel 到 PyPI<br>Wheel 包可以自己使用和传输给其他人使用，但是维护更新不方便，而 PyPI 作为 Python 的 软件仓库，让所有人可以方便的上传和下载，以及管理三方库。</p>
+<p>注册 PyPI 账号<br>登录 <a href="https://pypi.python.org/pypi，进入" target="_blank" rel="noopener">https://pypi.python.org/pypi，进入</a> Register 注册账号。</p>
+<p>安装 twine虽然 setuptools 支持使用 setup.py upload 上传包文件到 PyPI，但只支持 HTTP 而被新的 twine 取代,同样的，需要先安装 twine：</p>
+<pre><code>$ pip install twine</code></pre><p>使用 twine 上传<br>使用 upload：</p>
+<pre><code>$ twine upload dist/*</code></pre><p>输入 username 和 password 即上传至 PyPI。如果不想每次输入账号密码，可以在家目录下创建 .pypirc 文件，内容如下：</p>
+<pre><code>[distutils]
+index-servers =
+    pypi
+    pypitest
+
+[pypi]
+username: 
+password: 
+
+[pypitest]
+repository: https://test.pypi.org/legacy/
+username: 
+password:</code></pre><p>填上自己的账号密码即可，这里配置了官方的 pypi 和 pypitest，若要配置其他仓库，按格式添加。回到 PyPI 主页即可看到上传的 firstApp001<br><img src="https://github.com/lvyunze/image/raw/master/Python%E6%89%93%E5%8C%85%E5%88%86%E5%8F%91%E5%B7%A5%E5%85%B7setuptools/4.png" alt><br>setup() 参数<br><img src="https://github.com/lvyunze/image/raw/master/Python%E6%89%93%E5%8C%85%E5%88%86%E5%8F%91%E5%B7%A5%E5%85%B7setuptools/5.png" alt><br><img src="https://github.com/lvyunze/image/raw/master/Python%E6%89%93%E5%8C%85%E5%88%86%E5%8F%91%E5%B7%A5%E5%85%B7setuptools/6.png" alt><br>上面的 setup.py 安装文件内，我们已经使用了 setup() 一些参数：name, version, packages。<br>version<br>项目版本号，一般由三部分组成：MAJOR, MINOR, MAINTENANCE。 </p>
+<ul>
+<li>MAJOR version when they make incompatible API changes, </li>
+<li>MINOR version when they add functionality in a backwards-compatible manner, and </li>
+<li>MAINTENANCE version when they make backwards-compatible bug fixes.<br>版本号的选择参见：<a href="https://packaging.python.org/tutorials/distributing-packages/#choosing-a-versioning-scheme" target="_blank" rel="noopener">https://packaging.python.org/tutorials/distributing-packages/#choosing-a-versioning-scheme</a><br>packages:列出项目内需要被打包的所有 package。一般使用 setuptools.find_packages() 自动发现。<pre><code>packages=find_packages(exclude=[&#39;contrib&#39;, &#39;docs&#39;, &#39;tests*&#39;])
+# exclude 用于排除不打包的 package</code></pre>description：项目的简短描述，一般一句话就好，会显示在 PyPI 上名字下端。<pre><code>description=&#39;My first Python project&#39;</code></pre>对项目的完整描述，使用 long_description。如果此字符串是 rst 格式的，PyPI 会自动渲染成 HTML 显示。也可指定使用 markdown。<pre><code>long_description=long_description,
+long_description_content_type=&#39;text/x-rst&#39;</code></pre></li>
+</ul>
+<p>url:通常为 GitHub上 的链接或者 readthedocs 的链接。</p>
+<pre><code>url=&#39;https://github.com/pypa/sampleproject&#39;</code></pre><p>author:作者信息</p>
+<pre><code>author=&#39;example&#39;,
+author_email=&#39;example@example.com&#39;</code></pre><p>license:项目许可证</p>
+<pre><code>license=&#39;MIT&#39;</code></pre><p>关于各种许可证的介绍和选择，参考：<a href="https://choosealicense.com/" target="_blank" rel="noopener">https://choosealicense.com/</a><br>classifiers:项目分类，完整可选项参考：<a href="https://pypi.python.org/pypi?%3Aaction=list_classifiers" target="_blank" rel="noopener">https://pypi.python.org/pypi?%3Aaction=list_classifiers</a></p>
+<pre><code>classifiers=[
+    # How mature is this project? Common values are
+    # 3 - Alpha
+    # 4 - Beta
+    # 5 - Production/Stable
+    &#39;Development Status :: 3 - Alpha&#39;,
+
+    # Indicate who your project is intended for
+    &#39;Intended Audience :: Developers&#39;,
+    &#39;Topic :: Software Development :: Build Tools&#39;,
+
+    # Pick your license as you wish (should match &quot;license&quot; above)
+     &#39;License :: OSI Approved :: MIT License&#39;,
+
+    # Specify the Python versions you support here. In particular, ensure
+    # that you indicate whether you support Python 2, Python 3 or both.
+    &#39;Programming Language :: Python :: 2&#39;,
+    &#39;Programming Language :: Python :: 2.6&#39;,
+    &#39;Programming Language :: Python :: 2.7&#39;,
+    &#39;Programming Language :: Python :: 3&#39;,
+    &#39;Programming Language :: Python :: 3.2&#39;,
+    &#39;Programming Language :: Python :: 3.3&#39;,
+    &#39;Programming Language :: Python :: 3.4&#39;,
+],</code></pre><p>keywords:项目关键词列表</p>
+<pre><code>keywords=&#39;sample setuptools development&#39;</code></pre><p>project_urls:项目相关额外连接，如代码仓库，文档地址等。</p>
+<pre><code>project_urls={
+    &#39;Documentation&#39;: &#39;https://packaging.python.org/tutorials/distributing-packages/&#39;,
+    &#39;Funding&#39;: &#39;https://donate.pypi.org&#39;,
+    &#39;Say Thanks!&#39;: &#39;http://saythanks.io/to/example&#39;,
+    &#39;Source&#39;: &#39;https://github.com/pypa/sampleproject/&#39;,
+    &#39;Tracker&#39;: &#39;https://github.com/pypa/sampleproject/issues&#39;,
+}</code></pre><p>install_requires:项目依赖的 Python 库，使用 pip 安装本项目时会自动检查和安装依赖。</p>
+<pre><code>install_requires=[&#39;pyyaml&#39;]</code></pre><p>依赖的安装参考：<a href="https://packaging.python.org/discussions/install-requires-vs-requirements/#install-requires-vs-requirements-files" target="_blank" rel="noopener">https://packaging.python.org/discussions/install-requires-vs-requirements/#install-requires-vs-requirements-files</a><br>python_requires:指定项目依赖的 Python 版本</p>
+<pre><code>python_requires=&#39;&gt;=3&#39;</code></pre><p>package_data:项目依赖数据文件，数据文件必须放在项目目录内且使用相对路径</p>
+<pre><code>package_data={
+    &#39;myapp&#39;: [&#39;data/*.yml&#39;],
+}</code></pre><p>如果不指定作为目录的键为空串，则代表对所有模块操作（下例中将包含所有包内 data 目录下的 yaml 文件）：</p>
+<pre><code>package_data={
+    &#39;&#39;: [&#39;data/*.yml&#39;],
+}</code></pre><p>data_files:如果数据文件存在于项目外，则可以使用 data_files 参数或者 MANIFEST.in 文件进行管理。如果用于源码包，则使用 MANIFEST.in；如果用于 wheel，则使用 data_files。</p>
+<pre><code>data_files=[(‘mydata’, [‘data/conf.yml’])]</code></pre><p>上述设置将在打包 wheel 时，将 data/conf.yml 文件添加至 mydata 目录。(data_files 不能使用路径通配符)<br>此外，scripts, py_modeles, entry_points, console_scripts 等参数参考：<a href="https://packaging.python.org/tutorials/distributing-packages/#setup-args" target="_blank" rel="noopener">https://packaging.python.org/tutorials/distributing-packages/#setup-args</a><br>其他初始化文件<br>在阅读 Github 上的 Python 库时，除了最基本核心的 setup.py 文件和主程序之外，还会看到其他一些文件。本节将介绍它们的作用和使用方法。</p>
+<p>setup.cfg<br>包含了构建时候的一些默认参数，如：</p>
+<pre><code>[bdist_wheel]
+universal=1</code></pre><p>用于在使用 bdist_wheel 的时候的默认设置 –universal 参数 。</p>
+<p>README.rst/README.md:项目说明文档，使用 reStrutruedText 可以在 PyPI 上很好的渲染，但 Markdown 则支持不够好。</p>
+<p>MANIFEST.in:此文件在打源码包的时候告诉 setuptools 还需要额外打包哪些文件。</p>
+<pre><code># Include the README
+include *.md
+
+# Include the license file
+include LICENSE.txt
+
+# Include the data files
+recursive-include data *</code></pre><p>LICENSE.txt:项目许可说明文件<br>setuptools 默认打包的文件:README.rst/README.md、setup.cfg、MANIFEST.in<br>所以其他的文件，如 LICENSE.txt，在源码包时需要手动在 MANIFEST.in 里添加 include，在 wheel 包时需要在 setup.cfg 添加：</p>
+<pre><code>[metadata]
+license_file = LICENSE.txt
+</code></pre><h3 id="PyPI-上传推荐配置"><a href="#PyPI-上传推荐配置" class="headerlink" title="PyPI 上传推荐配置"></a>PyPI 上传推荐配置</h3><pre><code>setup.py 
+name
+version
+author
+author_email
+url
+packages
+description
+package_data/data_files
+setup.cfg
+MANIFEST.in
+README.rst
+LICENSE.txt
+&lt;项目&gt;</code></pre><p>官网例子参考：</p>
+<pre><code>from setuptools import setup, find_packages
+setup(
+    name=&quot;HelloWorld&quot;,
+    version=&quot;0.1&quot;,
+    packages=find_packages(),
+    scripts=[&#39;say_hello.py&#39;],
+
+    # Project uses reStructuredText, so ensure that the docutils get
+    # installed or upgraded on the target machine
+    install_requires=[&#39;docutils&gt;=0.3&#39;],
+
+    package_data={
+        # If any package contains *.txt or *.rst files, include them:
+        &#39;&#39;: [&#39;*.txt&#39;, &#39;*.rst&#39;],
+        # And include any *.msg files found in the &#39;hello&#39; package, too:
+        &#39;hello&#39;: [&#39;*.msg&#39;],
+    },
+
+    # metadata to display on PyPI
+    author=&quot;Me&quot;,
+    author_email=&quot;me@example.com&quot;,
+    description=&quot;This is an Example Package&quot;,
+    keywords=&quot;hello world example examples&quot;,
+    url=&quot;http://example.com/HelloWorld/&quot;,   # project home page, if any
+    project_urls={
+        &quot;Bug Tracker&quot;: &quot;https://bugs.example.com/HelloWorld/&quot;,
+        &quot;Documentation&quot;: &quot;https://docs.example.com/HelloWorld/&quot;,
+        &quot;Source Code&quot;: &quot;https://code.example.com/HelloWorld/&quot;,
+    },
+    classifiers=[
+        &#39;License :: OSI Approved :: Python Software Foundation License&#39;
+    ]
+
+    # could also include long_description, download_url, etc.
+)</code></pre><p>参考：<a href="https://setuptools.readthedocs.io/en/latest/setuptools.html#" target="_blank" rel="noopener">https://setuptools.readthedocs.io/en/latest/setuptools.html#</a></p>
+
+            </div>
+            <hr/>
+
+            
+            <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+
+            <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        <p class="reprint-tip">
+            <i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;
+            <span>转载规则</span>
+        </p>
+        
+            <div class="center-align">
+                <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh">
+                    <img alt=""
+                         style="border-width:0"
+                         src="https://i.creativecommons.org/l/by/4.0/88x31.png"/>
+                </a>
+            </div>
+            <br/>
+            <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
+                  property="dct:title" rel="dct:type">
+                    《Python打包分发工具setuptools》
+                </span> 由
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/08/03/python-da-bao-fen-fa-gong-ju-setuptools/" property="cc:attributionName"
+               rel="cc:attributionURL">
+                jack
+            </a> 采用
+            <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh">
+                知识共享署名 4.0 国际许可协议
+            </a>进行许可。
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2019/08/05/git/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="git">
+                        
+                        <span class="card-title">git</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            本文链接来源：https://my.oschina.net/dkvirus/blog/1154601写作本篇的目的：最初我是要找 Github 相关教程的，查阅了很多资料才发现 Git 才是核心。网络上的资料大多只讲解 Git 的某个知识点
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-08-05
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/工具/" class="post-category" target="_blank">
+                                    工具
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/git/" target="_blank">
+                        <span class="chip bg-color">git</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/08/01/python-docx-de-shi-yong/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="python-docx的使用">
+                        
+                        <span class="card-title">python-docx的使用</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            最近接到一个需求，就是需要在word中生成黑点(黑点可以是图片的形式)，还有在特定位置插入文字，语言是使用python，便想到了python-docxpython-docx 依赖：behave、flake8、lxml、mock、pypars
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-07-31
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/python库/" class="post-category" target="_blank">
+                                    python库
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/python-docx/" target="_blank">
+                        <span class="chip bg-color">python-docx</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+</div>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fa fa-list"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+    
+
+</main>
+
+
+<footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+        
+
+            
+
+            
+			
+                <br>
+                
+                <span id="busuanzi_container_site_pv">
+                    <i class="fa fa-heart-o"></i>
+                    本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                </span>
+                
+                
+                <span id="busuanzi_container_site_uv">
+                    <i class="fa fa-users"></i>
+                    次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                </span>
+                
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/lvyunze" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:17817462542@163.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1531446765@qq.com" class="tooltipped" data-tooltip="QQ联系我: 1531446765@qq.com" data-position="top" data-delay="50">
+        <i class="fa fa-qq"></i>
+    </a>
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fa fa-rss"></i>
+    </a>
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+<!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+<!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+<script src="/libs/materialize/materialize.min.js"></script>
+<script src="/libs/masonry/masonry.pkgd.min.js"></script>
+<script src="/libs/aos/aos.js"></script>
+<script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+<script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+<script src="/js/matery.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+
+    <script src="/libs/others/clicklove.js"></script>
+
+
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>
